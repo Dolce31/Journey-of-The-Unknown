@@ -1,8 +1,8 @@
 /* ==========================================================================
    AUDIO CONTROLLER (BGM จาก Catbox + SFX พิมพ์ดีดสังเคราะห์ 0.12)
    ========================================================================== */
-const bgm = document.getElementById('bgm-player');
-const btnAudio = document.getElementById('btn-audio');
+let bgm = null;
+let btnAudio = null;
 let isMusicStarted = false;
 let isMuted = false;
 
@@ -49,27 +49,10 @@ function startAudioOnUserGesture() {
     bgm.volume = 0.4;
     bgm.play().then(() => {
       isMusicStarted = true;
-      btnAudio.innerText = '♫';
+      if (btnAudio) btnAudio.innerText = '♫';
     }).catch(() => {});
   }
 }
-
-document.addEventListener('click', startAudioOnUserGesture, { once: true });
-document.addEventListener('touchstart', startAudioOnUserGesture, { once: true });
-
-btnAudio.addEventListener('click', (e) => {
-  e.stopPropagation();
-  isMuted = !isMuted;
-  btnAudio.innerText = isMuted ? '✕' : '♫';
-
-  if (bgm) {
-    bgm.muted = isMuted;
-    if (!isMusicStarted && !isMuted) {
-      bgm.play().catch(() => {});
-      isMusicStarted = true;
-    }
-  }
-});
 
 /* ==========================================================================
    GAME DATA
@@ -97,7 +80,6 @@ const gameData = {
   },
 
   stages: {
-    // --- บทนำที่เปลี่ยนเป็นบทใหม่ตามที่เราแต่งร่วมกัน ---
     prelude: {
       name: "บทนำ",
       title: "บทนำ: ว้อดส์",
@@ -249,7 +231,11 @@ function showGameNotification(text) {
 
 function showScreen(screenId) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(screenId).classList.add('active');
+  const target = document.getElementById(screenId);
+  if (target) {
+    target.classList.add('active');
+    target.scrollTop = 0;
+  }
 }
 
 function selectDifficulty(diff) {
@@ -341,7 +327,7 @@ function typeWriter(text, element, onComplete) {
 function finishTypingInstantly() {
   if (typewriterTimer) clearInterval(typewriterTimer);
   const textEl = document.getElementById('dialogue-jp');
-  textEl.innerText = fullCurrentText;
+  if (textEl) textEl.innerText = fullCurrentText;
   isTyping = false;
 
   const dialogue = currentDialogueList[currentDialogueIndex];
@@ -354,6 +340,7 @@ function showQuizChoices(quiz) {
   const quizContainer = document.getElementById('quiz-choices');
   const btnNext = document.getElementById('btn-next');
   
+  if (!quizContainer || !btnNext) return;
   quizContainer.innerHTML = '';
   quizContainer.classList.remove('hidden');
   btnNext.classList.add('hidden');
@@ -375,20 +362,23 @@ function renderDialogue() {
     return;
   }
 
-  document.getElementById('speaker-name').innerText = dialogue.speaker;
+  const speakerEl = document.getElementById('speaker-name');
+  if (speakerEl) speakerEl.innerText = dialogue.speaker;
   
   const textEl = document.getElementById('dialogue-jp');
   const quizContainer = document.getElementById('quiz-choices');
   const btnNext = document.getElementById('btn-next');
 
-  quizContainer.classList.add('hidden');
-  btnNext.classList.remove('hidden');
+  if (quizContainer) quizContainer.classList.add('hidden');
+  if (btnNext) btnNext.classList.remove('hidden');
 
-  typeWriter(dialogue.jp, textEl, () => {
-    if (dialogue.quiz) {
-      showQuizChoices(dialogue.quiz);
-    }
-  });
+  if (textEl) {
+    typeWriter(dialogue.jp, textEl, () => {
+      if (dialogue.quiz) {
+        showQuizChoices(dialogue.quiz);
+      }
+    });
+  }
 }
 
 function handleChoice(choice, clickedBtn) {
@@ -412,7 +402,8 @@ function handleChoice(choice, clickedBtn) {
 }
 
 function triggerGameOver(reasonText) {
-  document.getElementById('gameover-reason').innerText = reasonText;
+  const reasonEl = document.getElementById('gameover-reason');
+  if (reasonEl) reasonEl.innerText = reasonText;
   showScreen('screen-gameover');
 }
 
@@ -429,74 +420,29 @@ function completeCurrentStage() {
 
   const stageInfo = gameData.stages[currentStageId];
   const stageName = stageInfo?.name || "ด่านนี้";
-  document.getElementById('cleared-title').innerText = `${stageName} สำเร็จ!`;
-  document.getElementById('cleared-subtitle').innerText = stageInfo?.title || "";
+  const clearedTitle = document.getElementById('cleared-title');
+  const clearedSubtitle = document.getElementById('cleared-subtitle');
+  if (clearedTitle) clearedTitle.innerText = `${stageName} สำเร็จ!`;
+  if (clearedSubtitle) clearedSubtitle.innerText = stageInfo?.title || "";
 
   const btnNextChapter = document.getElementById('btn-next-chapter');
-  if (isFinalStage) {
-    btnNextChapter.innerText = "พิชิตครบทุกภารกิจแล้ว";
-    btnNextChapter.onclick = () => {
-      showGameNotification("คุณผ่านการทดสอบครบทั้งหมดแล้ว!");
-    };
-  } else {
-    btnNextChapter.innerText = "เล่นตอนถัดไป";
-    btnNextChapter.onclick = () => {
-      const nextStageKey = stageOrder[currentIndex + 1];
-      startStage(nextStageKey);
-    };
+  if (btnNextChapter) {
+    if (isFinalStage) {
+      btnNextChapter.innerText = "พิชิตครบทุกภารกิจแล้ว";
+      btnNextChapter.onclick = () => {
+        showGameNotification("คุณผ่านการทดสอบครบทั้งหมดแล้ว!");
+      };
+    } else {
+      btnNextChapter.innerText = "ตอนถัดไป";
+      btnNextChapter.onclick = () => {
+        const nextStageKey = stageOrder[currentIndex + 1];
+        startStage(nextStageKey);
+      };
+    }
   }
 
   showScreen('screen-cleared');
 }
-
-/* Event Listeners */
-document.getElementById('btn-start').addEventListener('click', () => {
-  showScreen('screen-difficulty');
-});
-
-const btnEasy = document.getElementById('btn-diff-easy');
-if (btnEasy) btnEasy.onclick = () => selectDifficulty('easy');
-
-const btnHard = document.getElementById('btn-diff-hard');
-if (btnHard) btnHard.onclick = () => selectDifficulty('hard');
-
-document.getElementById('btn-next').addEventListener('click', () => {
-  if (isTyping) {
-    finishTypingInstantly();
-  } else {
-    currentDialogueIndex++;
-    renderDialogue();
-  }
-});
-
-document.getElementById('btn-retry').addEventListener('click', () => {
-  startStage(currentStageId);
-});
-
-const btnBackMap = document.getElementById('btn-back-map');
-if (btnBackMap) {
-  btnBackMap.addEventListener('click', () => {
-    showScreen('screen-stage');
-  });
-}
-
-// Stage Nodes Click Listeners
-stageOrder.forEach(stageKey => {
-  const node = document.getElementById(`node-${stageKey}`);
-  if (node) {
-    node.addEventListener('click', () => {
-      startStage(stageKey);
-    });
-  }
-});
-
-// Glossary Modal
-document.getElementById('btn-glossary').addEventListener('click', () => {
-  document.getElementById('modal-glossary').classList.remove('hidden');
-});
-document.getElementById('btn-close-glossary').addEventListener('click', () => {
-  document.getElementById('modal-glossary').classList.add('hidden');
-});
 
 function updateGlossaryUI() {
   const listEl = document.getElementById('glossary-list');
@@ -509,4 +455,111 @@ function updateGlossaryUI() {
     li.innerHTML = `<strong>${item.jp}</strong> <span>${item.th}</span>`;
     listEl.appendChild(li);
   });
+}
+
+/* ==========================================================================
+   INITIALIZE APP (โหลด DOM เสร็จก่อนค่อยผูกปุ่ม ป้องกันปุ่มไม่ทำงาน)
+   ========================================================================== */
+function initGame() {
+  bgm = document.getElementById('bgm-player');
+  btnAudio = document.getElementById('btn-audio');
+
+  document.addEventListener('click', startAudioOnUserGesture, { once: true });
+  document.addEventListener('touchstart', startAudioOnUserGesture, { once: true });
+
+  if (btnAudio) {
+    btnAudio.addEventListener('click', (e) => {
+      e.stopPropagation();
+      isMuted = !isMuted;
+      btnAudio.innerText = isMuted ? '✕' : '♫';
+
+      if (bgm) {
+        bgm.muted = isMuted;
+        if (!isMusicStarted && !isMuted) {
+          bgm.play().catch(() => {});
+          isMusicStarted = true;
+        }
+      }
+    });
+  }
+
+  // 1. ปุ่มเริ่มเกม
+  const btnStart = document.getElementById('btn-start');
+  if (btnStart) {
+    btnStart.onclick = () => showScreen('screen-difficulty');
+  }
+
+  // 2. เลือกระดับความยาก
+  const btnEasy = document.getElementById('btn-diff-easy');
+  if (btnEasy) btnEasy.onclick = () => selectDifficulty('easy');
+
+  const btnHard = document.getElementById('btn-diff-hard');
+  if (btnHard) btnHard.onclick = () => selectDifficulty('hard');
+
+  // 3. ปุ่มย้อนกลับจากหน้าเลือกระดับความยาก -> หน้าหลัก
+  const btnDiffBack = document.getElementById('btn-diff-back');
+  if (btnDiffBack) {
+    btnDiffBack.onclick = () => showScreen('screen-title');
+  }
+
+  // 4. ปุ่มย้อนกลับจากหน้ารวมด่าน -> หน้าระดับความยาก
+  const btnStageBack = document.getElementById('btn-stage-back');
+  if (btnStageBack) {
+    btnStageBack.onclick = () => showScreen('screen-difficulty');
+  }
+
+  // 5. ปุ่มถัดไปในบทสนทนา
+  const btnNext = document.getElementById('btn-next');
+  if (btnNext) {
+    btnNext.onclick = () => {
+      if (isTyping) {
+        finishTypingInstantly();
+      } else {
+        currentDialogueIndex++;
+        renderDialogue();
+      }
+    };
+  }
+
+  // 6. ปุ่มเริ่มใหม่ Game Over
+  const btnRetry = document.getElementById('btn-retry');
+  if (btnRetry) {
+    btnRetry.onclick = () => startStage(currentStageId);
+  }
+
+  // 7. ปุ่มย้อนกลับจากหน้าจบด่าน -> หน้ารวมด่าน
+  const btnBackMap = document.getElementById('btn-back-map');
+  if (btnBackMap) {
+    btnBackMap.onclick = () => showScreen('screen-stage');
+  }
+
+  // 8. คลิกเลือกด่านแต่ละด่าน
+  stageOrder.forEach(stageKey => {
+    const node = document.getElementById(`node-${stageKey}`);
+    if (node) {
+      node.onclick = () => startStage(stageKey);
+    }
+  });
+
+  // 9. คลังคำศัพท์
+  const btnGlossary = document.getElementById('btn-glossary');
+  const btnCloseGlossary = document.getElementById('btn-close-glossary');
+  const modalGlossary = document.getElementById('modal-glossary');
+
+  if (btnGlossary && modalGlossary) {
+    btnGlossary.onclick = () => modalGlossary.classList.remove('hidden');
+  }
+  if (btnCloseGlossary && modalGlossary) {
+    btnCloseGlossary.onclick = () => modalGlossary.classList.add('hidden');
+  }
+
+  updateGlossaryUI();
+  updateStageMapUI();
+}
+
+// ตรวจสอบสถานะโหลดหน้าเว็บ
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initGame);
+} else {
+  initGame();
 }
