@@ -8,7 +8,7 @@
   --text-dark: #FFFFFF;
   --text-muted: #FFFFFF;
   --border-color: #6F5B9C;
-  --border-btn: #F0C242;   /* เปลี่ยนเป็นสีเหลืองทองตามที่สั่ง */
+  --border-btn: #F0C242;   /* ขอบปุ่มสีเหลืองทอง */
   --border-dark: #0C0816;
   --border-soft: #E2DBD0;
   --panel-bg: rgba(243, 240, 229, 0.98);
@@ -571,7 +571,7 @@ body {
   color: #FFFFFF; 
 }
 
-/* แถบแท็บเลือกบท */
+/* แถบแท็บเลือกบท ปรับ margin-top ให้อยู่ห่างจากขอบบนอย่างลงตัว */
 .glossary-tabs {
   display: flex;
   gap: 10px;
