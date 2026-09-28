@@ -513,12 +513,12 @@ const gameData = {
    ใส่ลิงก์รูปตัวละครของคุณที่นี่
    ========================================================================== */
 const characterImages = {
-  เรา: "https://files.catbox.moe/2csuu8.PNG",
-  เฟลิส: "https://files.catbox.moe/ioyavk.PNG",
+  เรา: "https://files.catbox.moe/lmt9pj.PNG",
+  เฟลิส: "https://files.catbox.moe/tkhyjx.PNG",
   "ชาวบ้าน A": "",
   "ชาวบ้าน B": "",
   "ชาวบ้าน C": "",
-  "???": "https://files.catbox.moe/ioyavk.PNG",
+  "???": "https://files.catbox.moe/tkhyjx.PNG",
   บรรยาย: "",
 };
 
@@ -632,13 +632,22 @@ function finishTypingInstantly() {
   if (dialogue && dialogue.quiz) showQuizChoices(dialogue.quiz);
 }
 
+// แสดงช้อยส์คำถาม พร้อมซ่อนกรอบตัวละคร
 function showQuizChoices(quiz) {
   const quizContainer = document.getElementById("quiz-choices");
   const btnNext = document.getElementById("btn-next");
+  const portraitBox = document.querySelector(".portrait-box");
+
   if (!quizContainer || !btnNext) return;
   quizContainer.innerHTML = "";
   quizContainer.classList.remove("hidden");
   btnNext.classList.add("hidden");
+
+  // ซ่อนกรอบตัวละครตอนมีช้อยส์ขึ้นมา เพื่อขยายพื้นที่
+  if (portraitBox) {
+    portraitBox.style.display = "none";
+  }
+
   quiz.choices.forEach((choice) => {
     const btn = document.createElement("button");
     btn.className = "btn-choice";
@@ -673,8 +682,13 @@ function renderDialogue() {
   const portraitFrame = document.querySelector(".portrait-frame");
   const portraitImg = document.getElementById("portrait-img");
 
+  // ถ้าบทสนทนานี้มีช้อยส์ หรือเป็นบทบรรยาย ให้ซ่อนกรอบตัวละคร
   if (portraitBox) {
-    portraitBox.style.display = dialogue.speaker === "บรรยาย" ? "none" : "flex";
+    if (dialogue.quiz || dialogue.speaker === "บรรยาย") {
+      portraitBox.style.display = "none";
+    } else {
+      portraitBox.style.display = "flex";
+    }
   }
 
   const imgSrc = characterImages[dialogue.speaker];
