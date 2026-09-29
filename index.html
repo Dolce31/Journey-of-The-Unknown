@@ -142,6 +142,15 @@
         </div>
 
         <div class="dialogue-right">
+          <!-- กล่องพลังชีวิตมุมขวาบนของ Text Box -->
+          <div class="dialogue-top-meta">
+            <div id="player-lives" class="lives-container hidden">
+              <span class="heart">❤️</span>
+              <span class="heart">❤️</span>
+              <span class="heart">❤️</span>
+            </div>
+          </div>
+
           <div class="text-area">
             <p id="dialogue-jp" class="jp-text"></p>
             <div id="quiz-choices" class="quiz-container hidden"></div>
@@ -182,7 +191,7 @@
       </div>
     </section>
 
-    <!-- Modal คลังคันจิ (แบบ Accordion ไหลเลื่อน) -->
+    <!-- Modal คลังคันจิ -->
     <div id="modal-glossary" class="modal-overlay hidden">
       <div class="modal-box">
         <div class="modal-header">
@@ -191,7 +200,6 @@
         </div>
 
         <div class="modal-body">
-          <!-- แถบเลือกบทที่ 1 - 5 -->
           <div class="glossary-tabs stage-tabs">
             <button class="tab-btn active" onclick="switchGlossaryTab('stage1')">บทที่ 1</button>
             <button class="tab-btn" onclick="switchGlossaryTab('stage2')">บทที่ 2</button>
@@ -200,7 +208,6 @@
             <button class="tab-btn" onclick="switchGlossaryTab('stage5')">บทที่ 5</button>
           </div>
 
-          <!-- แถบพับ N5 และ N4 - N3 ที่กดแล้วคำศัพท์จะไหลออกมา -->
           <div id="glossary-accordion-container" class="glossary-accordion-wrap"></div>
         </div>
       </div>
