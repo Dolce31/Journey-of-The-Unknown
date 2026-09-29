@@ -527,11 +527,13 @@ body {
 
 #screen-gameover .btn-text { margin-top: 4px; }
 
-/* Modal คลังคันจิ */
+/* ==========================================================================
+   Modal คลังคันจิ (แก้ไขจุดล็อก Scroll ให้เลื่อนขึ้นลงได้สมบูรณ์)
+   ========================================================================== */
 .modal-overlay {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(45, 30, 20, 0.4);
+  background: rgba(12, 8, 22, 0.7);
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -542,13 +544,15 @@ body {
   background: var(--bg-color);
   width: 100%;
   max-width: 600px;
-  max-height: 80dvh;
+  height: 85dvh;
+  max-height: 85dvh;
   border-radius: 24px 24px 0 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   padding-bottom: env(safe-area-inset-bottom, 16px);
-  border-top: 2px solid var(--border-color);
+  border-top: 2px solid var(--border-btn);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .modal-header {
@@ -557,26 +561,38 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
-.modal-header h3 { font-size: 17px; font-family: var(--font-th); font-weight: 700; color: #FFFFFF; }
+.modal-header h3 { font-size: 18px; font-family: var(--font-th); font-weight: 700; color: #FFFFFF; }
 
 .btn-close { 
   background: #150E26; 
   border: 1.5px solid var(--border-btn); 
   border-radius: 12px; 
-  padding: 2px 10px; 
-  font-size: 14px; 
+  padding: 3px 12px; 
+  font-size: 15px; 
   cursor: pointer; 
   color: #FFFFFF; 
 }
 
-/* แถบแท็บเลือกบท ปรับ margin-top ให้อยู่ห่างจากขอบบนอย่างลงตัว */
+/* สั่งให้ modal-body เป็นพื้นที่ Scroll หลักเพียงจุดเดียว */
+.modal-body { 
+  padding: 16px 20px; 
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+}
+
+/* แถบแท็บเลือกบท */
 .glossary-tabs {
   display: flex;
   gap: 10px;
-  margin-top: 14px;
-  margin-bottom: 18px;
+  margin-top: 4px;
+  margin-bottom: 14px;
   padding-bottom: 4px;
   overflow-x: auto;
   white-space: nowrap;
@@ -607,40 +623,136 @@ body {
 .tab-btn.active {
   background: #AA9BCE;
   color: #31215B;
-  border-color: #AA9BCE;
+  border-color: var(--border-btn);
 }
 
-.modal-body { 
-  padding: 16px 20px; 
-  overflow-y: auto; 
+/* ==========================================================================
+   Accordion แถบพับ N5 และ N4 - N3 (ไหลคลี่คำศัพท์ออกมา)
+   ========================================================================== */
+.glossary-accordion-wrap {
   display: flex;
   flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+  width: 100%;
+  overflow: visible;
+  padding-bottom: 24px;
 }
 
-.vocab-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-
-.vocab-item {
-  padding: 12px 16px;
-  background: #AA9BCE;
+.accordion-group {
   border: 2px solid var(--border-color);
-  border-radius: 14px;
-  font-size: 15px;
+  border-radius: 16px;
+  background: #150E26;
+  overflow: hidden;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  transition: border-color 0.25s ease;
+  flex-shrink: 0;
+}
+
+.accordion-group.open {
+  border-color: var(--border-btn);
+}
+
+.accordion-header {
+  width: 100%;
   display: flex;
   justify-content: space-between;
-}
-
-.vocab-item strong { font-family: var(--font-jp); font-weight: 700; color: #31215B; }
-.vocab-item span { font-family: var(--font-th); color: #31215B; font-weight: 600; }
-
-.empty-vocab-msg {
-  text-align: center;
-  color: #FFFFFF;
-  opacity: 0.8;
+  align-items: center;
+  padding: 13px 18px;
+  font-size: 16px;
+  font-weight: bold;
   font-family: var(--font-th);
-  font-size: 15px;
-  padding: 24px 0;
+  color: #FFFFFF;
+  background: #1f153a;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
 
+.accordion-header:hover {
+  background: #2a1c4e;
+}
+
+.accordion-arrow {
+  font-size: 13px;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--border-btn);
+}
+
+.accordion-group.open .accordion-arrow {
+  transform: rotate(180deg);
+}
+
+/* แอนิเมชันเปิดปิด และปลดล็อกให้แสดงคำศัพท์ทั้งหมด */
+.accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #AA9BCE;
+}
+
+.accordion-group.open .accordion-body {
+  max-height: 2500px;
+}
+
+.accordion-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ตารางแสดง 3 คอลัมน์: คันจิ (ซ้าย) - ฟุริกานะ (กลาง) - ความหมาย (ขวา) */
+.vocab-row {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr 1.4fr;
+  align-items: center;
+  padding: 11px 14px;
+  border-bottom: 1.5px solid rgba(111, 91, 156, 0.4);
+  font-size: 15px;
+}
+
+.vocab-row:last-child {
+  border-bottom: none;
+}
+
+.vocab-row:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.vocab-kanji {
+  font-family: var(--font-jp);
+  font-size: 18px;
+  font-weight: 700;
+  color: #150E26;
+  text-align: left;
+}
+
+.vocab-furi {
+  font-family: var(--font-clean);
+  color: #31215B;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.vocab-meaning {
+  font-family: var(--font-th);
+  color: #150E26;
+  font-weight: 600;
+  text-align: right;
+  font-size: 14px;
+}
+
+.vocab-empty {
+  padding: 18px;
+  text-align: center;
+  color: #31215B;
+  font-family: var(--font-th);
+  font-size: 14.5px;
+  font-weight: 600;
+}
+
+/* Toast */
 .game-toast {
   position: absolute;
   top: 20px;
