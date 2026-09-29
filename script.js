@@ -64,9 +64,9 @@ const stageOrder = [
 // เก็บแท็บบทที่กำลังเลือกดู
 let currentGlossaryTab = "stage1";
 
-// ระบบพลังชีวิต (หัวใจ 3 ดวง)
-let playerLives = 3;
-const MAX_LIVES = 3;
+// ระบบพลังชีวิต (ปรับตามความยาก: ง่าย = 2, ยาก = 1)
+let maxLives = 2;
+let playerLives = 2;
 
 const gameData = {
   glossary: {
@@ -234,7 +234,7 @@ const gameData = {
             jp: "เจ้าจะไปทำภารกิจแทนล่ะ",
             bg: "https://files.catbox.moe/25z9t1.PNG",
           },
-          { speaker: "เรา", jp: "หํะ" },
+          { speaker: "เรา", jp: "ห้ะ" },
           {
             speaker: "เฟลิส",
             jp: "โลกนี้น่ะนะมีสิ่งที่เรียกว่าเวทมนต์ แต่ก็ไม่ใช่ทุกคนจะใช้มันได้",
@@ -271,7 +271,7 @@ const gameData = {
           },
           {
             speaker: "เฟลิส",
-            jp: "ตัดสิินใจได้ดีนิ",
+            jp: "ตัดสินใจได้ดีนิ",
           },
           {
             speaker: "เฟลิส",
@@ -412,7 +412,7 @@ const gameData = {
             jp: "เจ้าจะไปทำภารกิจแทนล่ะ",
             bg: "https://files.catbox.moe/25z9t1.PNG",
           },
-          { speaker: "เรา", jp: "หํะ" },
+          { speaker: "เรา", jp: "ห้ะ" },
           {
             speaker: "เฟลิส",
             jp: "โลกนี้น่ะนะมีสิ่งที่เรียกว่าเวทมนต์ แต่ก็ไม่ใช่ทุกคนจะใช้มันได้",
@@ -501,7 +501,7 @@ const gameData = {
             jp: "ก่อนจะไปทำภารกิจ คงต้องให้เจ้าฝึกใช้เวทดูก่อนละนะ",
             bg: "https://files.catbox.moe/b7xb3k.jpg",
           },
-          { speaker: "เฟลิส", jp: "อืมแต่เวทมนต์มันต้องใช้ภาษาของโลกนี้ นี่ข้ำต้องค่อยบอกทุกคำเลยมั้ยเนี่ย คิดถูกมั้ยนะที่ตามมา" },
+          { speaker: "เฟลิส", jp: "อืมแต่เวทมนต์มันต้องใช้ภาษาของโลกนี้ นี่ข้าต้องค่อยบอกทุกคำเลยมั้ยเนี่ย คิดถูกมั้ยนะที่ตามมา" },
           { speaker: "เรา", jp: "อ่อ ไอภาษาที่เฟลิสพูดตอนเรามาถึงอะหรอ" },
           { speaker: "เฟลิส", jp: "ใช่ นี่ตอนนั้นเจ้าตื่นอยู่หรอเนี่ย!?" },
           { speaker: "เรา", jp: "ก็ไม่เชิง แต่ได้ยินเสียงอยู่" },
@@ -509,7 +509,7 @@ const gameData = {
           { speaker: "เฟลิส", jp: "ภาษาเดียวกันกับโลกเจ้าหรอ!?! น่าสนใจแหะ แล้วเจ้าพอจะรู้เกี่ยวกับภาษานั้นบ้างมั้ย" },
           { speaker: "เรา", jp: "เมื่อก่อนก็เคยเรียนด้วยตัวเองมาบ้างแต่ก็ได้แค่นิดเดียว ยังไงก็คงต้องให้เฟลิสคอยอยู่ช่วย" },
           { speaker: "เฟลิส", jp: "ก็ได้แต่อย่ามาเรียกใช้ข้ามากไปละข้าน่ะมาด้วยเพราะไม่อยากอยู่เตรียมพิธีด้วยเฉยๆหรอกนะ" },
-          { speaker: "เฟลิส", jp: "ถ้างั้น เจ้าลองถือไม่กายสิทธิ์ที่ให้ไปขึ้นมาสิ" },
+          { speaker: "เฟลิส", jp: "ถ้างั้น เจ้าลองถือไม้กายสิทธิ์ที่ให้ไปขึ้นมาสิ" },
           { speaker: "เฟลิส", jp: "เห็นแก้วน้ำตรงนั้นมั้ย" },
           { speaker: "เฟลิส", jp: "เจ้าลองตั้งสมาธิจดจ่อไปที่แก้วแล้วลองวาดอักษรสักอย่างเพื่อเติมน้ำลงแก้วดู" },
           {
@@ -630,7 +630,7 @@ const gameData = {
             jp: "ก่อนจะไปทำภารกิจ คงต้องให้เจ้าฝึกใช้เวทดูก่อนละนะ",
             bg: "https://files.catbox.moe/b7xb3k.jpg",
           },
-          { speaker: "เฟลิส", jp: "อืมแต่เวทมนต์มันต้องใช้ภาษาของโลกนี้ นี่ข้ำต้องค่อยบอกทุกคำเลยมั้ยเนี่ย คิดถูกมั้ยนะที่ตามมา" },
+          { speaker: "เฟลิส", jp: "อืมแต่เวทมนต์มันต้องใช้ภาษาของโลกนี้ นี่ข้าต้องค่อยบอกทุกคำเลยมั้ยเนี่ย คิดถูกมั้ยนะที่ตามมา" },
           { speaker: "เรา", jp: "อ่อ ไอภาษาที่เฟลิสพูดตอนเรามาถึงอะหรอ" },
           { speaker: "เฟลิส", jp: "ใช่ นี่ตอนนั้นเจ้าตื่นอยู่หรอเนี่ย!?" },
           { speaker: "เรา", jp: "ก็ไม่เชิง แต่ได้ยินเสียงอยู่" },
@@ -638,7 +638,7 @@ const gameData = {
           { speaker: "เฟลิส", jp: "ภาษาเดียวกันกับโลกเจ้าหรอ!?! น่าสนใจแหะ แล้วเจ้าพอจะรู้เกี่ยวกับภาษานั้นบ้างมั้ย" },
           { speaker: "เรา", jp: "เมื่อก่อนก็เคยเรียนด้วยตัวเองมาบ้างแต่ก็ได้แค่นิดเดียว ยังไงก็คงต้องให้เฟลิสคอยอยู่ช่วย" },
           { speaker: "เฟลิส", jp: "ก็ได้แต่อย่ามาเรียกใช้ข้ามากไปละข้าน่ะมาด้วยเพราะไม่อยากอยู่เตรียมพิธีด้วยเฉยๆหรอกนะ" },
-          { speaker: "เฟลิส", jp: "ถ้างั้น เจ้าลองถือไม่กายสิทธิ์ที่ให้ไปขึ้นมาสิ" },
+          { speaker: "เฟลิส", jp: "ถ้างั้น เจ้าลองถือไม้กายสิทธิ์ที่ให้ไปขึ้นมาสิ" },
           { speaker: "เฟลิส", jp: "เห็นแก้วน้ำตรงนั้นมั้ย" },
           { speaker: "เฟลิส", jp: "เจ้าลองตั้งสมาธิจดจ่อไปที่แก้วแล้วลองวาดอักษรสักอย่างเพื่อเติมน้ำลงแก้วดู" },
           {
@@ -647,7 +647,7 @@ const gameData = {
             quiz: {
               choices: [
                 {
-                  text: "海議 —ぎ ",
+                  text: "会議",
                   isCorrect: false,
                   deathReason: "คุณพยายามเติมเต็มแก้วน้ำด้วยเวทพูดคุยทำให้ไม่สามารถหยุดพูดได้จนกว่าจะทำภารกิจสำเร็จ คอรวมไปถึงส่วนอื่นๆของร่างกายคุณจึงแห้งราวกับทะเลทราย",
                 },
@@ -656,7 +656,7 @@ const gameData = {
                   isCorrect: false,
                   deathReason: "คุณพยายามเติมเต็มแก้วน้ำด้วยการร่ายเวทเผาไหม้จนเกิดอัคคีภัย",
                 },
-                { text: "湯 —ゆ", isCorrect: true },
+                { text: "湯", isCorrect: true },
               ],
             },
           },
@@ -670,11 +670,16 @@ const gameData = {
           {
             speaker: "เฟลิส",
             jp: "ที่นี่ล่ะ! บ้านหลังนี้จะเป็นภารกิจแรกของเรา",
+            bg: "https://files.catbox.moe/6sx09m.jpg",
           },
           { speaker: "เรา", jp: "ว้าว… บ้านสวยจังเลย" },
           { speaker: "เฟลิส", jp: "เจ้าของบ้านไม่ได้อยู่ที่นี่มานานแล้ว เลยขอให้พวกเรามาช่วยทำความสะอาดหน่อยน่ะ" },
           { speaker: "เรา", jp: "อ๋อ เข้าใจแล้ว" },
-          { speaker: "บรรยาย", jp: "เข้าบ้าน" },
+          {
+            speaker: "บรรยาย",
+            jp: "เข้าบ้าน",
+            bg: "https://files.catbox.moe/j5th0o.jpg",
+          },
           { speaker: "เรา", jp: "โอ้โห้ ฝุ่นเยอะขนาดนี้เลยเหรอเนี่ย " },
           { speaker: "เรา", jp: "เฟลิส นายทำเองคนเดียวไม่ได้เหรอ? ฉันเป็นภูมิแพ้นะ แหะ ๆ" },
           { speaker: "เฟลิส", jp: "จะบ้าเหรอ นายต้องช่วยสิ! ใส่หน้ากากไว้ก็แล้วกัน" },
@@ -1073,6 +1078,9 @@ function showScreen(screenId) {
 
 function selectDifficulty(diff) {
   currentDifficulty = diff;
+  maxLives = diff === "easy" ? 2 : 1;
+  playerLives = maxLives;
+  
   const badge = document.getElementById("diff-badge");
   if (badge) badge.innerText = diff === "easy" ? "ระดับง่าย" : "ระดับยาก";
   updateStageMapUI();
@@ -1096,7 +1104,7 @@ function updateStageMapUI() {
   });
 }
 
-// อัปเดตแถบหัวใจ
+// อัปเดตแถบหัวใจตามพลังชีวิตสูงสุดของโหมด
 function updateLivesUI(show = true) {
   const livesEl = document.getElementById("player-lives");
   if (!livesEl) return;
@@ -1106,7 +1114,7 @@ function updateLivesUI(show = true) {
   }
   livesEl.classList.remove("hidden");
   let heartsHtml = "";
-  for (let i = 0; i < MAX_LIVES; i++) {
+  for (let i = 0; i < maxLives; i++) {
     if (i < playerLives) {
       heartsHtml += `<span class="heart">❤️</span>`;
     } else {
@@ -1124,7 +1132,7 @@ function startStage(stageKey) {
   }
   currentStageId = stageKey;
   currentDialogueIndex = 0;
-  playerLives = MAX_LIVES; // รีเซ็ตพลังชีวิตเป็น 3 เต็ม
+  playerLives = maxLives;
   updateLivesUI(false);
   
   const stage = gameData.stages[stageKey];
@@ -1167,7 +1175,7 @@ function finishTypingInstantly() {
   if (dialogue && dialogue.quiz) showQuizChoices(dialogue.quiz);
 }
 
-// ฟังก์ชันสุ่มลำดับ Array (Fisher-Yates Shuffle)
+// สุ่มลำดับ Array (Fisher-Yates Shuffle)
 function shuffleArray(array) {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -1177,7 +1185,7 @@ function shuffleArray(array) {
   return shuffled;
 }
 
-// แสดงช้อยส์คำถาม พร้อมสุ่มสลับตำแหน่งข้อทุกรอบ และหน่วงเวลาล็อกการคลิกป้องกันนิ้วลั่น
+// แสดงช้อยส์ สุ่มตำแหน่งข้อ และหน่วงเวลาล็อกคลิก 450ms กันนิ้วลั่น
 function showQuizChoices(quiz) {
   const quizContainer = document.getElementById("quiz-choices");
   const btnNext = document.getElementById("btn-next");
@@ -1186,21 +1194,18 @@ function showQuizChoices(quiz) {
   if (!quizContainer || !btnNext) return;
   quizContainer.innerHTML = "";
   quizContainer.classList.remove("hidden");
-  btnNext.classList.add("hidden"); // ซ่อนปุ่มถัดไปทันที
+  btnNext.classList.add("hidden");
 
   if (portraitBox) {
     portraitBox.style.display = "none";
   }
 
-  // สุ่มตำแหน่งช้อยส์ ป้องกันการจำตำแหน่งเดิม
   const randomizedChoices = shuffleArray(quiz.choices);
 
   randomizedChoices.forEach((choice) => {
     const btn = document.createElement("button");
     btn.className = "btn-choice";
     btn.innerText = choice.text;
-    
-    // ล็อกปุ่มไว้ก่อนตอนเพิ่งแสดงผล เพื่อกันนิ้วลั่นจากการกดรัวๆ
     btn.disabled = true;
     btn.style.pointerEvents = "none";
 
@@ -1208,7 +1213,6 @@ function showQuizChoices(quiz) {
     quizContainer.appendChild(btn);
   });
 
-  // รอ 450 มิลลิวินาที ค่อยปลดล็อกให้กดเลือกช้อยส์ได้
   setTimeout(() => {
     const allChoiceBtns = quizContainer.querySelectorAll(".btn-choice");
     allChoiceBtns.forEach((btn) => {
@@ -1225,7 +1229,6 @@ function renderDialogue() {
     return;
   }
 
-  // แสดงหัวใจเฉพาะช่วงที่มีควิซ
   if (dialogue.quiz) {
     updateLivesUI(true);
   } else {
@@ -1285,7 +1288,7 @@ function renderDialogue() {
   }
 }
 
-// ตรวจสอบตัวเลือก: ลดเลือดเมื่อตอบผิด ล็อกปุ่มไม่ให้กดซ้ำ (ไม่ขีดฆ่า)
+// จัดการตัวเลือก ตอบผิดลดเลือด ล็อกปุ่มไม่ให้กดซ้ำ (ไม่ขีดฆ่า)
 function handleChoice(choice, clickedBtn) {
   if (choice.isCorrect) {
     document
@@ -1301,11 +1304,9 @@ function handleChoice(choice, clickedBtn) {
       renderDialogue();
     }, 600);
   } else {
-    // ลดเลือด 1 ดวง
     playerLives--;
     updateLivesUI(true);
 
-    // ล็อกปุ่มข้อที่ตอบผิด ไม่ให้กดซ้ำ (ไม่ขีดฆ่า)
     if (clickedBtn) {
       clickedBtn.disabled = true;
       clickedBtn.style.opacity = "0.5";
@@ -1314,7 +1315,6 @@ function handleChoice(choice, clickedBtn) {
 
     showGameNotification(choice.deathReason || "ตอบผิด! เสียพลังชีวิต 1 ดวง");
 
-    // ถ้าเลือดหมด 3 ดวง ถึงจะ Game Over
     if (playerLives <= 0) {
       setTimeout(() => {
         triggerGameOver(
