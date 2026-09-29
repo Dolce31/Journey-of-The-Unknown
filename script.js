@@ -269,7 +269,7 @@ const gameData = {
           },
           {
             speaker: "เฟลิส",
-            jp: "ตัดสินใจได้ดีนิ",
+            jp: "ตัดสิินใจได้ดีนิ",
           },
           {
             speaker: "เฟลิส",
@@ -1175,7 +1175,7 @@ function shuffleArray(array) {
   return shuffled;
 }
 
-// แสดงช้อยส์คำถาม พร้อมสุ่มสลับตำแหน่งข้อทุกรอบ
+// แสดงช้อยส์คำถาม พร้อมสุ่มสลับตำแหน่งข้อทุกรอบ และหน่วงเวลาล็อกการคลิกป้องกันนิ้วลั่น
 function showQuizChoices(quiz) {
   const quizContainer = document.getElementById("quiz-choices");
   const btnNext = document.getElementById("btn-next");
@@ -1184,7 +1184,7 @@ function showQuizChoices(quiz) {
   if (!quizContainer || !btnNext) return;
   quizContainer.innerHTML = "";
   quizContainer.classList.remove("hidden");
-  btnNext.classList.add("hidden");
+  btnNext.classList.add("hidden"); // ซ่อนปุ่มถัดไปทันที
 
   if (portraitBox) {
     portraitBox.style.display = "none";
@@ -1197,9 +1197,23 @@ function showQuizChoices(quiz) {
     const btn = document.createElement("button");
     btn.className = "btn-choice";
     btn.innerText = choice.text;
+    
+    // ล็อกปุ่มไว้ก่อนตอนเพิ่งแสดงผล เพื่อกันนิ้วลั่นจากการกดรัวๆ
+    btn.disabled = true;
+    btn.style.pointerEvents = "none";
+
     btn.onclick = () => handleChoice(choice, btn);
     quizContainer.appendChild(btn);
   });
+
+  // รอ 450 มิลลิวินาที ค่อยปลดล็อกให้กดเลือกช้อยส์ได้
+  setTimeout(() => {
+    const allChoiceBtns = quizContainer.querySelectorAll(".btn-choice");
+    allChoiceBtns.forEach((btn) => {
+      btn.disabled = false;
+      btn.style.pointerEvents = "auto";
+    });
+  }, 450);
 }
 
 function renderDialogue() {
