@@ -1,7 +1,7 @@
 :root {
   --bg-color: #31215B;
   --primary: #150E26;
-  --primary-hover: #22163D;
+  --primary-hover: #22163D;  /* แก้ไขกลับมาเป็นค่าสีเดิมเรียบร้อย */
   --secondary: #E8E2D5;
   --accent: #8E4A42;
   --accent-soft: #EDE3E1;
@@ -463,7 +463,25 @@ body {
   margin-top: 0;
 }
 
-.quiz-container { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 8px; }
+.quiz-container { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px; 
+  width: 100%; 
+  margin-top: 8px;
+  animation: fadeInChoices 0.3s ease-out;
+}
+
+@keyframes fadeInChoices {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 .btn-choice {
   text-align: left;
