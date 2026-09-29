@@ -64,6 +64,10 @@ const stageOrder = [
 // เก็บแท็บบทที่กำลังเลือกดู
 let currentGlossaryTab = "stage1";
 
+// ระบบพลังชีวิต (หัวใจ 3 ดวง)
+let playerLives = 3;
+const MAX_LIVES = 3;
+
 const gameData = {
   glossary: {
     stage1: {
@@ -667,14 +671,11 @@ const gameData = {
           {
             speaker: "เฟลิส",
             jp: "ที่นี่ล่ะ! บ้านหลังนี้จะเป็นภารกิจแรกของเรา",
-            bg: "https://files.catbox.moe/6sx09m.jpg",
           },
           { speaker: "เรา", jp: "ว้าว… บ้านสวยจังเลย" },
           { speaker: "เฟลิส", jp: "เจ้าของบ้านไม่ได้อยู่ที่นี่มานานแล้ว เลยขอให้พวกเรามาช่วยทำความสะอาดหน่อยน่ะ" },
           { speaker: "เรา", jp: "อ๋อ เข้าใจแล้ว" },
-          { speaker: "บรรยาย", jp: "เข้าบ้าน",
-            bg: "https://files.catbox.moe/j5th0o.jpg",
-          }, 
+          { speaker: "บรรยาย", jp: "เข้าบ้าน" },
           { speaker: "เรา", jp: "โอ้โห้ ฝุ่นเยอะขนาดนี้เลยเหรอเนี่ย " },
           { speaker: "เรา", jp: "เฟลิส นายทำเองคนเดียวไม่ได้เหรอ? ฉันเป็นภูมิแพ้นะ แหะ ๆ" },
           { speaker: "เฟลิส", jp: "จะบ้าเหรอ นายต้องช่วยสิ! ใส่หน้ากากไว้ก็แล้วกัน" },
@@ -1096,6 +1097,26 @@ function updateStageMapUI() {
   });
 }
 
+// อัปเดตแถบหัวใจ
+function updateLivesUI(show = true) {
+  const livesEl = document.getElementById("player-lives");
+  if (!livesEl) return;
+  if (!show) {
+    livesEl.classList.add("hidden");
+    return;
+  }
+  livesEl.classList.remove("hidden");
+  let heartsHtml = "";
+  for (let i = 0; i < MAX_LIVES; i++) {
+    if (i < playerLives) {
+      heartsHtml += `<span class="heart">❤️</span>`;
+    } else {
+      heartsHtml += `<span class="heart lost">🖤</span>`;
+    }
+  }
+  livesEl.innerHTML = heartsHtml;
+}
+
 function startStage(stageKey) {
   const targetIndex = stageOrder.indexOf(stageKey);
   if (targetIndex > unlockedStageIndex) {
@@ -1104,6 +1125,9 @@ function startStage(stageKey) {
   }
   currentStageId = stageKey;
   currentDialogueIndex = 0;
+  playerLives = MAX_LIVES; // รีเซ็ตพลังชีวิตเป็น 3 เต็ม
+  updateLivesUI(false);
+  
   const stage = gameData.stages[stageKey];
   if (!stage || (!stage.dialogues && !stage[currentDifficulty]?.dialogues)) {
     showGameNotification("กำลังพัฒนาจ้าใจเย็นๆน้า");
@@ -1144,6 +1168,17 @@ function finishTypingInstantly() {
   if (dialogue && dialogue.quiz) showQuizChoices(dialogue.quiz);
 }
 
+// ฟังก์ชันสุ่มลำดับ Array (Fisher-Yates Shuffle)
+function shuffleArray(array) {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// แสดงช้อยส์คำถาม พร้อมสุ่มสลับตำแหน่งข้อทุกรอบ
 function showQuizChoices(quiz) {
   const quizContainer = document.getElementById("quiz-choices");
   const btnNext = document.getElementById("btn-next");
@@ -1158,7 +1193,10 @@ function showQuizChoices(quiz) {
     portraitBox.style.display = "none";
   }
 
-  quiz.choices.forEach((choice) => {
+  // สุ่มตำแหน่งช้อยส์ ป้องกันการจำตำแหน่งเดิม
+  const randomizedChoices = shuffleArray(quiz.choices);
+
+  randomizedChoices.forEach((choice) => {
     const btn = document.createElement("button");
     btn.className = "btn-choice";
     btn.innerText = choice.text;
@@ -1172,6 +1210,13 @@ function renderDialogue() {
   if (!dialogue) {
     completeCurrentStage();
     return;
+  }
+
+  // แสดงหัวใจเฉพาะช่วงที่มีควิซ
+  if (dialogue.quiz) {
+    updateLivesUI(true);
+  } else {
+    updateLivesUI(false);
   }
 
   const bgImg = document.getElementById("scene-bg-img");
@@ -1227,6 +1272,7 @@ function renderDialogue() {
   }
 }
 
+// ตรวจสอบตัวเลือก: ลดเลือดเมื่อตอบผิด ล็อกปุ่มไม่ให้กดซ้ำ (ไม่ขีดฆ่า)
 function handleChoice(choice, clickedBtn) {
   if (choice.isCorrect) {
     document
@@ -1242,9 +1288,27 @@ function handleChoice(choice, clickedBtn) {
       renderDialogue();
     }, 600);
   } else {
-    triggerGameOver(
-      choice.deathReason || "ใช้ไวยากรณ์ผิดพลาดจนเป็นเรื่อง!",
-    );
+    // ลดเลือด 1 ดวง
+    playerLives--;
+    updateLivesUI(true);
+
+    // ล็อกปุ่มข้อที่ตอบผิด ไม่ให้กดซ้ำ (ไม่ขีดฆ่า)
+    if (clickedBtn) {
+      clickedBtn.disabled = true;
+      clickedBtn.style.opacity = "0.5";
+      clickedBtn.style.borderColor = "#e74c3c";
+    }
+
+    showGameNotification(choice.deathReason || "ตอบผิด! เสียพลังชีวิต 1 ดวง");
+
+    // ถ้าเลือดหมด 3 ดวง ถึงจะ Game Over
+    if (playerLives <= 0) {
+      setTimeout(() => {
+        triggerGameOver(
+          choice.deathReason || "พลังชีวิตหมดสิ้น! ใช้ภาษาผิดพลาดจนถึงแก่กรรม",
+        );
+      }, 800);
+    }
   }
 }
 
@@ -1289,7 +1353,6 @@ function completeCurrentStage() {
   showScreen("screen-cleared");
 }
 
-// สลับแท็บบทในคลังคันจิ
 function switchGlossaryTab(stageKey) {
   currentGlossaryTab = stageKey;
   document.querySelectorAll(".stage-tabs .tab-btn").forEach((btn, index) => {
@@ -1299,7 +1362,6 @@ function switchGlossaryTab(stageKey) {
   renderGlossaryAccordion();
 }
 
-// ฟังก์ชันสร้างแถบพับ Accordion (N5 และ N4-N3)
 function renderGlossaryAccordion() {
   const container = document.getElementById("glossary-accordion-container");
   if (!container) return;
@@ -1316,7 +1378,6 @@ function renderGlossaryAccordion() {
     const group = document.createElement("div");
     group.className = "accordion-group";
 
-    // ปุ่มหัวแถบ
     const headerBtn = document.createElement("button");
     headerBtn.className = "accordion-header";
     headerBtn.type = "button";
@@ -1325,7 +1386,6 @@ function renderGlossaryAccordion() {
       <span class="accordion-arrow">▼</span>
     `;
 
-    // กล่องเนื้อหาคำศัพท์ด้านในที่จะคลี่ออกมา
     const bodyDiv = document.createElement("div");
     bodyDiv.className = "accordion-body";
 
@@ -1348,7 +1408,6 @@ function renderGlossaryAccordion() {
       bodyDiv.appendChild(ul);
     }
 
-    // คลิกเพื่อสไลด์เปิด - ปิดแบบ Accordion
     headerBtn.onclick = () => {
       group.classList.toggle("open");
     };
