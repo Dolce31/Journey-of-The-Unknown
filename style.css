@@ -344,10 +344,10 @@ body {
 .dialogue-panel.integrated-panel {
   background: #AA9BCE;
   border-top: 2px solid var(--border-color);
-  padding: 14px 18px;
+  padding: 10px 16px;
   padding-bottom: calc(env(safe-area-inset-bottom, 14px) + 8px);
-  min-height: 180px;
-  max-height: 40%;
+  min-height: 185px;
+  max-height: 42%;
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -400,27 +400,70 @@ body {
   box-sizing: border-box;
 }
 
+/* ปรับ dialogue-right ให้เรียงชิดบน และไม่ถ่างออก */
 .dialogue-right {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 6px;
+  justify-content: flex-start;
+  gap: 4px;
 }
 
-.text-area { width: 100%; }
+/* แถบหัวใจพลังชีวิตมุมขวาบน (กะทัดรัด ไม่ดันข้อความลงต่ำ) */
+.dialogue-top-meta {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  min-height: 18px;
+  margin-bottom: 2px;
+}
 
+.lives-container {
+  display: flex;
+  gap: 4px;
+  font-size: 13px;
+  background: rgba(21, 14, 38, 0.45);
+  padding: 1px 7px;
+  border-radius: 12px;
+  border: 1px solid rgba(240, 194, 66, 0.3);
+  animation: heartPop 0.3s ease;
+}
+
+.lives-container .heart {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.lives-container .heart.lost {
+  filter: grayscale(1);
+  opacity: 0.35;
+  transform: scale(0.85);
+}
+
+@keyframes heartPop {
+  0% { transform: scale(0.9); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.text-area { 
+  width: 100%; 
+  flex: 1;
+}
+
+/* ปรับข้อความให้ชิดบน ไม่อิง min-height กว้างเกินไป */
 .jp-text {
   font-family: var(--font-clean);
   font-weight: 600;
-  font-size: 17px;
+  font-size: 16.5px;
   color: #31215B;
-  line-height: 1.5;
-  min-height: 48px;
+  line-height: 1.45;
+  min-height: auto;
   white-space: pre-wrap;
+  margin-top: 0;
 }
 
-.quiz-container { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 6px; }
+.quiz-container { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: 8px; }
 
 .btn-choice {
   text-align: left;
@@ -434,15 +477,21 @@ body {
   font-size: 15px;
   font-family: var(--font-clean);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  transition: opacity 0.2s, border-color 0.2s;
 }
 
-.action-bar { display: flex; justify-content: flex-end; width: 100%; }
+.action-bar { 
+  display: flex; 
+  justify-content: flex-end; 
+  width: 100%; 
+  margin-top: 4px;
+}
 
 .btn-action {
   background: #150E26;
   color: #FFFFFF;
   border: 2px solid var(--border-btn);
-  padding: 8px 22px;
+  padding: 7px 20px;
   border-radius: 20px;
   cursor: pointer;
   font-family: var(--font-th);
@@ -527,9 +576,7 @@ body {
 
 #screen-gameover .btn-text { margin-top: 4px; }
 
-/* ==========================================================================
-   Modal คลังคันจิ (แก้ไขจุดล็อก Scroll ให้เลื่อนขึ้นลงได้สมบูรณ์)
-   ========================================================================== */
+/* Modal คลังคันจิ */
 .modal-overlay {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -576,7 +623,6 @@ body {
   color: #FFFFFF; 
 }
 
-/* สั่งให้ modal-body เป็นพื้นที่ Scroll หลักเพียงจุดเดียว */
 .modal-body { 
   padding: 16px 20px; 
   flex: 1;
@@ -587,7 +633,6 @@ body {
   flex-direction: column;
 }
 
-/* แถบแท็บเลือกบท */
 .glossary-tabs {
   display: flex;
   gap: 10px;
@@ -626,9 +671,6 @@ body {
   border-color: var(--border-btn);
 }
 
-/* ==========================================================================
-   Accordion แถบพับ N5 และ N4 - N3 (ไหลคลี่คำศัพท์ออกมา)
-   ========================================================================== */
 .glossary-accordion-wrap {
   display: flex;
   flex-direction: column;
@@ -683,7 +725,6 @@ body {
   transform: rotate(180deg);
 }
 
-/* แอนิเมชันเปิดปิด และปลดล็อกให้แสดงคำศัพท์ทั้งหมด */
 .accordion-body {
   max-height: 0;
   overflow: hidden;
@@ -701,7 +742,6 @@ body {
   padding: 0;
 }
 
-/* ตารางแสดง 3 คอลัมน์: คันจิ (ซ้าย) - ฟุริกานะ (กลาง) - ความหมาย (ขวา) */
 .vocab-row {
   display: grid;
   grid-template-columns: 1fr 1.1fr 1.4fr;
@@ -752,7 +792,7 @@ body {
   font-weight: 600;
 }
 
-/* Toast */
+/* Toast Notification */
 .game-toast {
   position: absolute;
   top: 20px;
