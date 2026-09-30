@@ -61,12 +61,43 @@ const stageOrder = [
   "stage5",
 ];
 
-// เก็บแท็บบทที่กำลังเลือกดู
+const stageNamesMap = {
+  stage1: "บทที่ 1",
+  stage2: "บทที่ 2",
+  stage3: "บทที่ 3",
+  stage4: "บทที่ 4",
+  stage5: "บทที่ 5",
+};
+
+let currentDifficulty = "easy";
+let currentStageId = "stage1";
+let currentDialogueIndex = 0;
+let currentDialogueList = [];
+
+// ดึงด่านที่ปลดล็อกของโหมดปัจจุบัน (แยกบันทึกไม่ปนกัน)
+function getUnlockedIndex() {
+  try {
+    const val = parseInt(localStorage.getItem(`unlockedStage_${currentDifficulty}`));
+    return isNaN(val) ? 0 : val;
+  } catch (e) {
+    return 0;
+  }
+}
+
+function setUnlockedIndex(val) {
+  try {
+    localStorage.setItem(`unlockedStage_${currentDifficulty}`, val);
+  } catch (e) {}
+}
+
 let currentGlossaryTab = "stage1";
 
-// ระบบพลังชีวิต (ปรับตามความยาก: ง่าย = 2, ยาก = 1)
-let maxLives = 2;
-let playerLives = 2;
+// ระบบหัวใจใหม่: ง่าย = 3 ดวง, ยาก = 2 ดวง
+let maxLives = 3;
+let playerLives = 3;
+
+// บันทึกช้อยส์ที่เลือก
+let userChoices = {};
 
 const gameData = {
   glossary: {
@@ -714,7 +745,7 @@ const gameData = {
           { speaker: "เรา", jp: " สะอาดขึ้นตั้งเยอะเลย!" },
           { speaker: "เฟลิส", jp: "ไปกันเถอะ ภารกิจต่อไปยังรอเราอยู่" },
           { speaker: "เรา", jp: "ในที่สุด…" },
-          { speaker: "เจ้าของบ้าน", jp: "あら！綺麗に掃除してくれたみたいですね！" },
+          { speaker: "เจ้าของบ้าน", jp: "あら！家がきれいになった！" },
           { speaker: "เรา", jp: "เอ๊ะ… เขาพูดว่าอะไรน่ะ?" },
           { speaker: "เฟลิส", jp: "เขาบอกว่า “บ้านสะอาดแล้ว” น่ะ" },
           { speaker: "เจ้าของบ้าน", jp: "皆さんのおかげで、本当に助かりました！" },
@@ -1025,7 +1056,7 @@ const gameData = {
 };
 
 /* ==========================================================================
-   ใส่ลิงก์รูปตัวละครของคุณที่นี่
+   รูปโปรไฟล์ตัวละคร
    ========================================================================== */
 const characterImages = {
   เรา: "https://files.catbox.moe/lmt9pj.PNG",
@@ -1037,18 +1068,6 @@ const characterImages = {
   บรรยาย: "",
   "เจ้าของบ้าน": "",
 };
-
-let currentDifficulty = "easy";
-let currentStageId = "stage1";
-let currentDialogueIndex = 0;
-let currentDialogueList = [];
-let unlockedStageIndex = 0;
-
-try {
-  unlockedStageIndex = parseInt(localStorage.getItem("savedStageIndex")) || 0;
-} catch (e) {
-  unlockedStageIndex = 0;
-}
 
 let typewriterTimer = null;
 let isTyping = false;
@@ -1077,33 +1096,35 @@ function showScreen(screenId) {
 
 function selectDifficulty(diff) {
   currentDifficulty = diff;
-  maxLives = diff === "easy" ? 2 : 1;
+  maxLives = diff === "easy" ? 3 : 2;
   playerLives = maxLives;
   
   const badge = document.getElementById("diff-badge");
-  if (badge) badge.innerText = diff === "easy" ? "ระดับง่าย" : "ระดับยาก";
+  if (badge) badge.innerText = diff === "easy" ? "EASY" : "HARD";
   updateStageMapUI();
   showScreen("screen-stage");
 }
 
+// อัปเดตแผนที่ด่าน ล็อกด่านที่ยังเล่นไม่ผ่าน
 function updateStageMapUI() {
+  const unlockedIndex = getUnlockedIndex();
   stageOrder.forEach((stageKey, index) => {
     const nodeEl = document.getElementById(`node-${stageKey}`);
     if (!nodeEl) return;
     const lockIcon = nodeEl.querySelector(".lock-icon");
-    if (index <= unlockedStageIndex) {
+    if (index <= unlockedIndex) {
       nodeEl.classList.remove("locked");
       nodeEl.classList.add("unlocked");
       if (lockIcon) lockIcon.innerText = "";
     } else {
       nodeEl.classList.add("locked");
       nodeEl.classList.remove("unlocked");
-      if (lockIcon) lockIcon.innerText = "ล็อก";
+      if (lockIcon) lockIcon.innerText = "LOCKED";
     }
   });
 }
 
-// อัปเดตแถบหัวใจตามพลังชีวิตสูงสุดของโหมด
+// แสดงหัวใจ
 function updateLivesUI(show = true) {
   const livesEl = document.getElementById("player-lives");
   if (!livesEl) return;
@@ -1125,13 +1146,18 @@ function updateLivesUI(show = true) {
 
 function startStage(stageKey) {
   const targetIndex = stageOrder.indexOf(stageKey);
-  if (targetIndex > unlockedStageIndex) {
-    showGameNotification("บทนี้ถูกล็อกอยู่ เคลียร์บทก่อนหน้าก่อนนะจ๊ะ");
+  const unlockedIndex = getUnlockedIndex();
+  
+  // ตรวจสอบการล็อกด่าน
+  if (targetIndex > unlockedIndex) {
+    showGameNotification("บทนี้ยังไม่ปลดล็อก ต้องผ่านบทก่อนหน้าก่อนนะ!");
     return;
   }
+
   currentStageId = stageKey;
   currentDialogueIndex = 0;
   playerLives = maxLives;
+  userChoices = {};
   updateLivesUI(false);
   
   const stage = gameData.stages[stageKey];
@@ -1174,7 +1200,6 @@ function finishTypingInstantly() {
   if (dialogue && dialogue.quiz) showQuizChoices(dialogue.quiz);
 }
 
-// สุ่มลำดับ Array (Fisher-Yates Shuffle)
 function shuffleArray(array) {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -1184,7 +1209,6 @@ function shuffleArray(array) {
   return shuffled;
 }
 
-// แสดงช้อยส์ สุ่มตำแหน่งข้อ และหน่วงเวลาล็อกคลิก 450ms กันนิ้วลั่น
 function showQuizChoices(quiz) {
   const quizContainer = document.getElementById("quiz-choices");
   const btnNext = document.getElementById("btn-next");
@@ -1228,7 +1252,9 @@ function renderDialogue() {
     return;
   }
 
-  if (dialogue.quiz) {
+  // แสดงแถบหัวใจเฉพาะเมื่อเป็นควิซที่มีข้อผิด
+  const hasWrongChoice = dialogue.quiz && dialogue.quiz.choices.some((c) => !c.isCorrect);
+  if (hasWrongChoice) {
     updateLivesUI(true);
   } else {
     updateLivesUI(false);
@@ -1287,9 +1313,11 @@ function renderDialogue() {
   }
 }
 
-// จัดการตัวเลือก ตอบผิดลดเลือด ล็อกปุ่มไม่ให้กดซ้ำ (ไม่ขีดฆ่า)
+// ตรวจสอบตัวเลือก: ลดหัวใจ และตายเมื่อหมดโอกาส
 function handleChoice(choice, clickedBtn) {
   if (choice.isCorrect) {
+    userChoices[currentDialogueIndex] = choice.text;
+
     document
       .querySelectorAll(".btn-choice")
       .forEach((b) => (b.disabled = true));
@@ -1303,23 +1331,33 @@ function handleChoice(choice, clickedBtn) {
       renderDialogue();
     }, 600);
   } else {
-    playerLives--;
-    updateLivesUI(true);
+    if (playerLives > 0) {
+      playerLives--;
+      updateLivesUI(true);
 
-    if (clickedBtn) {
-      clickedBtn.disabled = true;
-      clickedBtn.style.opacity = "0.5";
-      clickedBtn.style.borderColor = "#e74c3c";
-    }
+      if (clickedBtn) {
+        clickedBtn.disabled = true;
+        clickedBtn.style.opacity = "0.5";
+        clickedBtn.style.borderColor = "#e74c3c";
+      }
 
-    showGameNotification(choice.deathReason || "ตอบผิด! เสียพลังชีวิต 1 ดวง");
-
-    if (playerLives <= 0) {
+      if (playerLives === 0) {
+        showGameNotification("⚠️ หัวใจหมดแล้ว! หากตอบผิดอีกครั้งจะตายทันที");
+      } else {
+        showGameNotification(choice.deathReason || "ตอบผิด! เสียหัวใจ 1 ดวง");
+      }
+    } else {
+      // หัวใจหมดอยู่แล้ว และยังตอบผิดซ้ำอีก -> GAME OVER
+      if (clickedBtn) {
+        clickedBtn.disabled = true;
+        clickedBtn.style.opacity = "0.5";
+        clickedBtn.style.borderColor = "#e74c3c";
+      }
       setTimeout(() => {
         triggerGameOver(
-          choice.deathReason || "พลังชีวิตหมดสิ้น! ใช้ภาษาผิดพลาดจนถึงแก่กรรม",
+          choice.deathReason || "ตอบผิดเกินกำหนด! ใช้ภาษาผิดพลาดจนถึงแก่กรรม",
         );
-      }, 800);
+      }, 700);
     }
   }
 }
@@ -1333,11 +1371,11 @@ function triggerGameOver(reasonText) {
 function completeCurrentStage() {
   const currentIndex = stageOrder.indexOf(currentStageId);
   const isFinalStage = currentIndex >= stageOrder.length - 1;
-  if (currentIndex === unlockedStageIndex && !isFinalStage) {
-    unlockedStageIndex++;
-    try {
-      localStorage.setItem("savedStageIndex", unlockedStageIndex);
-    } catch (e) {}
+  const currentUnlocked = getUnlockedIndex();
+  
+  // ปลดล็อกด่านถัดไปของโหมดนี้
+  if (currentIndex === currentUnlocked && !isFinalStage) {
+    setUnlockedIndex(currentIndex + 1);
   }
   updateStageMapUI();
 
@@ -1363,6 +1401,49 @@ function completeCurrentStage() {
     }
   }
   showScreen("screen-cleared");
+}
+
+function renderDialogueLog() {
+  const container = document.getElementById("log-content-list");
+  if (!container) return;
+  container.innerHTML = "";
+
+  const pastDialogues = currentDialogueList.slice(0, currentDialogueIndex + 1);
+  if (pastDialogues.length === 0) {
+    container.innerHTML = `<div class="log-empty">ยังไม่มีประวัติการสนทนา</div>`;
+    return;
+  }
+
+  pastDialogues.forEach((d, idx) => {
+    if (!d.jp && !d.text) return;
+
+    const entry = document.createElement("div");
+    entry.className = "log-entry";
+
+    const speaker = document.createElement("div");
+    speaker.className = "log-speaker";
+    speaker.innerText = d.speaker || "บรรยาย";
+
+    const text = document.createElement("div");
+    text.className = "log-text";
+    text.innerText = d.jp || "";
+
+    entry.appendChild(speaker);
+    entry.appendChild(text);
+
+    if (userChoices[idx]) {
+      const choiceEl = document.createElement("div");
+      choiceEl.className = "log-choice";
+      choiceEl.innerHTML = `<span class="choice-tag">▶ ช้อยส์ที่เลือก:</span> ${userChoices[idx]}`;
+      entry.appendChild(choiceEl);
+    }
+
+    container.appendChild(entry);
+  });
+
+  setTimeout(() => {
+    container.scrollTop = container.scrollHeight;
+  }, 50);
 }
 
 function switchGlossaryTab(stageKey) {
@@ -1430,6 +1511,96 @@ function renderGlossaryAccordion() {
   });
 }
 
+function filterGlossary(query) {
+  const container = document.getElementById("glossary-accordion-container");
+  const tabsEl = document.getElementById("glossary-stage-tabs");
+  const btnClear = document.getElementById("btn-clear-search");
+  if (!container) return;
+
+  const q = query.trim().toLowerCase();
+
+  if (!q) {
+    if (tabsEl) tabsEl.style.display = "flex";
+    if (btnClear) btnClear.classList.add("hidden");
+    renderGlossaryAccordion();
+    return;
+  }
+
+  if (tabsEl) tabsEl.style.display = "none";
+  if (btnClear) btnClear.classList.remove("hidden");
+  container.innerHTML = "";
+
+  const results = [];
+
+  stageOrder.forEach((stageKey) => {
+    const stageVocab = gameData.glossary[stageKey];
+    if (!stageVocab) return;
+
+    const stageLabel = stageNamesMap[stageKey] || stageKey;
+
+    (stageVocab.easy || []).forEach((item) => {
+      if (
+        item.kanji.toLowerCase().includes(q) ||
+        item.furi.toLowerCase().includes(q) ||
+        item.th.toLowerCase().includes(q)
+      ) {
+        results.push({ ...item, stage: `${stageLabel} (N5)` });
+      }
+    });
+
+    (stageVocab.hard || []).forEach((item) => {
+      if (
+        item.kanji.toLowerCase().includes(q) ||
+        item.furi.toLowerCase().includes(q) ||
+        item.th.toLowerCase().includes(q)
+      ) {
+        results.push({ ...item, stage: `${stageLabel} (N4-N3)` });
+      }
+    });
+  });
+
+  const metaHeader = document.createElement("div");
+  metaHeader.className = "search-header-meta";
+  metaHeader.innerText = `ผลการค้นหา: พบ ${results.length} คำ`;
+  container.appendChild(metaHeader);
+
+  if (results.length === 0) {
+    const emptyDiv = document.createElement("div");
+    emptyDiv.className = "vocab-empty";
+    emptyDiv.style.color = "#FFFFFF";
+    emptyDiv.innerText = `ไม่พบคันจิหรือความหมายที่ตรงกับ "${query}"`;
+    container.appendChild(emptyDiv);
+    return;
+  }
+
+  const group = document.createElement("div");
+  group.className = "accordion-group open";
+  group.style.border = "2px solid var(--border-btn)";
+
+  const bodyDiv = document.createElement("div");
+  bodyDiv.className = "accordion-body";
+  bodyDiv.style.maxHeight = "none";
+
+  const ul = document.createElement("ul");
+  ul.className = "accordion-list";
+
+  results.forEach((item) => {
+    const li = document.createElement("li");
+    li.className = "vocab-row search-row";
+    li.innerHTML = `
+      <span class="vocab-stage-tag">${item.stage}</span>
+      <span class="vocab-kanji">${item.kanji}</span>
+      <span class="vocab-furi">${item.furi}</span>
+      <span class="vocab-meaning">${item.th}</span>
+    `;
+    ul.appendChild(li);
+  });
+
+  bodyDiv.appendChild(ul);
+  group.appendChild(bodyDiv);
+  container.appendChild(group);
+}
+
 function initGame() {
   bgm = document.getElementById("bgm-player");
   btnAudio = document.getElementById("btn-audio");
@@ -1452,6 +1623,39 @@ function initGame() {
           isMusicStarted = true;
         }
       }
+    };
+  }
+
+  // คู่มือการเล่น
+  const btnGuideMain = document.getElementById("btn-guide-main");
+  const btnCloseGuide = document.getElementById("btn-close-guide");
+  const modalGuide = document.getElementById("modal-guide");
+
+  if (btnGuideMain && modalGuide) {
+    btnGuideMain.onclick = () => {
+      modalGuide.classList.remove("hidden");
+    };
+  }
+  if (btnCloseGuide && modalGuide) {
+    btnCloseGuide.onclick = () => {
+      modalGuide.classList.add("hidden");
+    };
+  }
+
+  // ประวัติการสนทนา
+  const btnLog = document.getElementById("btn-log");
+  const btnCloseLog = document.getElementById("btn-close-log");
+  const modalLog = document.getElementById("modal-log");
+
+  if (btnLog && modalLog) {
+    btnLog.onclick = () => {
+      renderDialogueLog();
+      modalLog.classList.remove("hidden");
+    };
+  }
+  if (btnCloseLog && modalLog) {
+    btnCloseLog.onclick = () => {
+      modalLog.classList.add("hidden");
     };
   }
 
@@ -1492,23 +1696,39 @@ function initGame() {
   const btnBackMap = document.getElementById("btn-back-map");
   if (btnBackMap) btnBackMap.onclick = () => showScreen("screen-stage");
 
+  // ผูกคลิกที่โหนดด่าน
   stageOrder.forEach((stageKey) => {
     const node = document.getElementById(`node-${stageKey}`);
     if (node) node.onclick = () => startStage(stageKey);
   });
 
+  // คลังคันจิ
   const btnGlossary = document.getElementById("btn-glossary");
   const btnCloseGlossary = document.getElementById("btn-close-glossary");
   const modalGlossary = document.getElementById("modal-glossary");
+  const searchInput = document.getElementById("glossary-search-input");
+  const btnClearSearch = document.getElementById("btn-clear-search");
 
   if (btnGlossary && modalGlossary) {
     btnGlossary.onclick = () => {
+      if (searchInput) searchInput.value = "";
       switchGlossaryTab("stage1");
       modalGlossary.classList.remove("hidden");
     };
   }
   if (btnCloseGlossary && modalGlossary) {
     btnCloseGlossary.onclick = () => modalGlossary.classList.add("hidden");
+  }
+
+  if (searchInput) {
+    searchInput.oninput = (e) => filterGlossary(e.target.value);
+  }
+
+  if (btnClearSearch && searchInput) {
+    btnClearSearch.onclick = () => {
+      searchInput.value = "";
+      filterGlossary("");
+    };
   }
 
   updateStageMapUI();
