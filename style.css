@@ -29,7 +29,7 @@
 *::-webkit-scrollbar { display: none; }
 
 body {
-  background-color: #1a1130;
+  background-color: var(--bg-color);
   font-family: var(--font-clean);
   color: #FFFFFF;
   height: 100vh;
@@ -38,34 +38,31 @@ body {
   overflow: hidden;
   user-select: none;
   -webkit-font-smoothing: antialiased;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
+/* กรอบหลักของเกม จัดเต็มจอและเป็นหลักอิงตำแหน่ง */
 .game-container {
   width: 100%;
-  max-width: 480px;
-  height: 100vh;
-  height: 100dvh;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100dvh;
   background-color: var(--bg-color);
   position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
 }
 
+/* แถบด้านบน: เกาะขอบบนของจอเกม ทั้งในคอมและมือถือ */
 .top-bar {
   position: absolute;
-  top: env(safe-area-inset-top, 16px);
-  left: 20px;
-  right: 20px;
+  top: max(env(safe-area-inset-top, 16px), 16px);
+  left: 16px;
+  right: 16px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   z-index: 50;
-  width: calc(100% - 40px);
   pointer-events: none;
 }
 
@@ -87,31 +84,35 @@ body {
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease, background 0.15s ease;
 }
 
-/* ปุ่มเสียงเพลงทรงเดิม */
+.icon-btn:active {
+  transform: scale(0.96);
+  background: #22163D;
+}
+
+/* ปุ่มเสียงเพลง: ทรงเดิมและเกาะขวาบนเสมอ */
 .audio-btn {
   font-family: system-ui, sans-serif;
   font-size: 16px;
   min-width: 40px;
   border-radius: 50%;
-  margin-left: auto;
 }
 
-/* ปุ่มคู่มือการเล่นมุมซ้ายบน */
+/* ปุ่มคู่มือการเล่น: เกาะมุมซ้ายบนของหน้าแรก ไม่หลุดจอ */
 .guide-btn {
-  position: absolute !important;
-  top: env(safe-area-inset-top, 16px) !important;
-  left: 20px !important;
-  right: auto !important;
-  width: auto !important;
-  max-width: fit-content !important;
+  position: absolute;
+  top: max(env(safe-area-inset-top, 16px), 16px);
+  left: 16px;
+  right: auto;
+  width: auto;
+  max-width: fit-content;
   z-index: 60;
-  cursor: pointer;
   white-space: nowrap;
 }
 
-/* ปุ่มย้อนกลับมุมซ้ายบนในหน้า Gameplay */
+/* ปุ่มย้อนกลับมุมซ้ายบนในหน้า Gameplay: อยู่ในกรอบฉากหลัง */
 .back-btn {
   position: absolute;
   top: 14px;
@@ -121,7 +122,6 @@ body {
   width: auto;
   max-width: fit-content;
   z-index: 20;
-  cursor: pointer;
   white-space: nowrap;
   background: rgba(21, 14, 38, 0.85);
   border: 1.5px solid var(--border-btn);
@@ -146,11 +146,12 @@ body {
   display: none !important;
   flex-direction: column;
   flex: 1;
-  padding: calc(env(safe-area-inset-top, 16px) + 60px) 20px env(safe-area-inset-bottom, 20px);
+  padding: calc(max(env(safe-area-inset-top, 16px), 16px) + 50px) 20px calc(max(env(safe-area-inset-bottom, 20px), 20px));
   overflow-y: auto;
   width: 100%;
   max-width: 720px;
   margin: 0 auto;
+  position: relative;
 }
 
 .screen.active { display: flex !important; }
@@ -365,7 +366,12 @@ body {
 .path-line { width: 2px; height: 12px; background: var(--border-soft); border-radius: 2px; }
 
 /* Screen 4: Gameplay */
-#screen-gameplay { padding: 0; max-width: 100%; justify-content: space-between; }
+#screen-gameplay { 
+  padding: 0 !important; 
+  width: 100%; 
+  max-width: 100%; 
+  justify-content: space-between; 
+}
 
 .scene-viewer {
   flex: 1;
@@ -404,7 +410,7 @@ body {
   background: #AA9BCE;
   border-top: 2px solid var(--border-color);
   padding: 10px 16px;
-  padding-bottom: calc(env(safe-area-inset-bottom, 14px) + 8px);
+  padding-bottom: calc(max(env(safe-area-inset-bottom, 14px), 14px) + 6px);
   min-height: 185px;
   max-height: 42%;
   display: flex;
