@@ -100,6 +100,21 @@ body {
   white-space: nowrap;
 }
 
+/* ปุ่มย้อนกลับมุมซ้ายบนในหน้า Gameplay */
+.back-btn {
+  position: absolute !important;
+  top: env(safe-area-inset-top, 16px) !important;
+  left: 20px !important;
+  right: auto !important;
+  width: auto !important;
+  max-width: fit-content !important;
+  z-index: 60;
+  cursor: pointer;
+  white-space: nowrap;
+  background: rgba(21, 14, 38, 0.85);
+  backdrop-filter: blur(4px);
+}
+
 /* ปุ่มประวัติการสนทนามุมขวาล่างของฉาก */
 .log-btn {
   position: absolute;
