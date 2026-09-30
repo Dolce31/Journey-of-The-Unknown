@@ -29,7 +29,7 @@
 *::-webkit-scrollbar { display: none; }
 
 body {
-  background-color: var(--bg-color);
+  background-color: #1a1130;
   font-family: var(--font-clean);
   color: #FFFFFF;
   height: 100vh;
@@ -38,18 +38,22 @@ body {
   overflow: hidden;
   user-select: none;
   -webkit-font-smoothing: antialiased;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .game-container {
   width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100dvh;
+  max-width: 480px;
+  height: 100vh;
+  height: 100dvh;
   background-color: var(--bg-color);
   position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
 }
 
 .top-bar {
@@ -62,6 +66,11 @@ body {
   align-items: center;
   z-index: 50;
   width: calc(100% - 40px);
+  pointer-events: none;
+}
+
+.top-bar > * {
+  pointer-events: auto;
 }
 
 .icon-btn {
@@ -80,14 +89,16 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
+/* ปุ่มเสียงเพลงทรงเดิม */
 .audio-btn {
   font-family: system-ui, sans-serif;
   font-size: 16px;
   min-width: 40px;
   border-radius: 50%;
+  margin-left: auto;
 }
 
-/* ปุ่มคู่มือการเล่นมุมซ้ายบน (ล็อกขนาดให้ไม่โดนยืดเต็มจอ) */
+/* ปุ่มคู่มือการเล่นมุมซ้ายบน */
 .guide-btn {
   position: absolute !important;
   top: env(safe-area-inset-top, 16px) !important;
@@ -102,16 +113,18 @@ body {
 
 /* ปุ่มย้อนกลับมุมซ้ายบนในหน้า Gameplay */
 .back-btn {
-  position: absolute !important;
-  top: env(safe-area-inset-top, 16px) !important;
-  left: 20px !important;
-  right: auto !important;
-  width: auto !important;
-  max-width: fit-content !important;
-  z-index: 60;
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: auto;
+  bottom: auto;
+  width: auto;
+  max-width: fit-content;
+  z-index: 20;
   cursor: pointer;
   white-space: nowrap;
   background: rgba(21, 14, 38, 0.85);
+  border: 1.5px solid var(--border-btn);
   backdrop-filter: blur(4px);
 }
 
