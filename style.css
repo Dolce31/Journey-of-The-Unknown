@@ -87,13 +87,17 @@ body {
   border-radius: 50%;
 }
 
-/* ปุ่มคู่มือการเล่นมุมซ้ายบน */
+/* ปุ่มคู่มือการเล่นมุมซ้ายบน (ล็อกขนาดให้ไม่โดนยืดเต็มจอ) */
 .guide-btn {
-  position: absolute;
-  top: env(safe-area-inset-top, 16px);
-  left: 20px;
+  position: absolute !important;
+  top: env(safe-area-inset-top, 16px) !important;
+  left: 20px !important;
+  right: auto !important;
+  width: auto !important;
+  max-width: fit-content !important;
   z-index: 60;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 /* ปุ่มประวัติการสนทนามุมขวาล่างของฉาก */
