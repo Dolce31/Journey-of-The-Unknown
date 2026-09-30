@@ -1675,6 +1675,16 @@ function initGame() {
   if (btnStageBack)
     btnStageBack.onclick = () => showScreen("screen-difficulty");
 
+  // ปุ่มย้อนกลับมุมซ้ายบนของฉากเล่นเกม -> ย้อนไปหน้าเลือกตอน
+  const btnGameplayBack = document.getElementById("btn-gameplay-back");
+  if (btnGameplayBack) {
+    btnGameplayBack.onclick = () => {
+      if (typewriterTimer) clearInterval(typewriterTimer);
+      isTyping = false;
+      showScreen("screen-stage");
+    };
+  }
+
   const btnNext = document.getElementById("btn-next");
   if (btnNext) {
     btnNext.onclick = () => {
