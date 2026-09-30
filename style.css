@@ -41,9 +41,10 @@ body {
 }
 
 .game-container {
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100dvh;
   background-color: var(--bg-color);
   position: relative;
   display: flex;
@@ -51,21 +52,16 @@ body {
   overflow: hidden;
 }
 
-/* แถบด้านบน: ปล่อยเต็มความกว้างจอ ปุ่มอยู่ตามขอบในจอ */
 .top-bar {
   position: absolute;
-  top: max(env(safe-area-inset-top, 16px), 16px);
+  top: env(safe-area-inset-top, 16px);
   left: 20px;
   right: 20px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   z-index: 50;
-  pointer-events: none;
-}
-
-.top-bar > * {
-  pointer-events: auto;
+  width: calc(100% - 40px);
 }
 
 .icon-btn {
@@ -91,27 +87,26 @@ body {
   border-radius: 50%;
 }
 
-/* ปุ่มคู่มือการเล่น: มุมซ้ายบน */
+/* ปุ่มคู่มือการเล่นมุมซ้ายบน */
 .guide-btn {
-  position: absolute;
-  top: max(env(safe-area-inset-top, 16px), 16px);
-  left: 20px;
-  right: auto;
-  width: auto;
-  max-width: fit-content;
+  position: absolute !important;
+  top: env(safe-area-inset-top, 16px) !important;
+  left: 20px !important;
+  right: auto !important;
+  width: auto !important;
+  max-width: fit-content !important;
   z-index: 60;
+  cursor: pointer;
   white-space: nowrap;
 }
 
-/* ปุ่มย้อนกลับมุมซ้ายบนในหน้า Gameplay */
+/* ปุ่มย้อนกลับมุมซ้ายบนในฉากเล่นเกม: เกาะมุมซ้ายบนของฉากพอดี */
 .back-btn {
   position: absolute;
   top: 16px;
   left: 20px;
   right: auto;
   bottom: auto;
-  width: auto;
-  max-width: fit-content;
   z-index: 20;
   white-space: nowrap;
   background: rgba(21, 14, 38, 0.85);
@@ -122,8 +117,8 @@ body {
 /* ปุ่มประวัติการสนทนามุมขวาล่างของฉาก */
 .log-btn {
   position: absolute;
-  right: 20px;
-  bottom: 14px;
+  right: 14px;
+  bottom: 12px;
   z-index: 10;
   padding: 5px 14px;
   font-size: 13px;
@@ -133,15 +128,15 @@ body {
   backdrop-filter: blur(4px);
 }
 
-/* หน้าจอ: กว้างเต็มหน้าจอปกติ ไม่โดนบีบแคบ */
 .screen {
   display: none !important;
   flex-direction: column;
   flex: 1;
-  padding: calc(max(env(safe-area-inset-top, 16px), 16px) + 50px) 24px calc(max(env(safe-area-inset-bottom, 20px), 20px));
+  padding: calc(env(safe-area-inset-top, 16px) + 60px) 20px env(safe-area-inset-bottom, 20px);
   overflow-y: auto;
   width: 100%;
-  height: 100%;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 .screen.active { display: flex !important; }
@@ -153,10 +148,9 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  margin: auto;
+  margin: auto 0;
   gap: 16px;
   width: 100%;
-  max-width: 600px;
 }
 
 .main-cover {
@@ -180,16 +174,16 @@ body {
   font-family: var(--font-jp);
   font-weight: 700;
   color: #FFFFFF;
-  font-size: 28px;
+  font-size: 26px;
   line-height: 1.4;
   letter-spacing: 1px;
 }
 
 .game-subtitle {
   font-family: var(--font-th);
-  font-size: 14px;
+  font-size: 13.5px;
   color: #FFFFFF;
-  max-width: 380px;
+  max-width: 290px;
   line-height: 1.4;
   margin: 0 auto;
   opacity: 0.95;
@@ -233,15 +227,14 @@ body {
   align-items: center;
   gap: 20px;
   width: 100%;
-  max-width: 320px;
-  margin: auto;
+  max-width: 290px;
 }
 
 .section-title {
   text-align: center;
   font-family: var(--font-th);
   font-weight: 700;
-  font-size: 26px;
+  font-size: 24px;
   color: #FFFFFF;
 }
 
@@ -286,10 +279,10 @@ body {
   align-items: center;
   margin-bottom: 16px;
   width: 100%;
-  max-width: 600px;
+  max-width: 480px;
 }
 
-.episodes-main-title { color: #FFFFFF; font-size: 22px; }
+.episodes-main-title { color: #FFFFFF; }
 
 .badge {
   background: var(--secondary);
@@ -308,7 +301,7 @@ body {
   gap: 8px;
   align-items: center;
   width: 100%;
-  max-width: 600px;
+  max-width: 480px;
   padding-bottom: 20px;
 }
 
@@ -317,7 +310,7 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 20px;
+  padding: 13px 18px;
   border: 2px solid var(--border-btn);
   border-radius: 18px;
   background: #150E26;
@@ -357,14 +350,8 @@ body {
 .stage-node.locked .lock-icon { color: #31215B; }
 .path-line { width: 2px; height: 12px; background: var(--border-soft); border-radius: 2px; }
 
-/* Screen 4: Gameplay - เต็มจอคอมและมือถือ */
-#screen-gameplay { 
-  padding: 0 !important; 
-  width: 100vw; 
-  height: 100vh;
-  height: 100dvh;
-  justify-content: space-between; 
-}
+/* Screen 4: Gameplay */
+#screen-gameplay { padding: 0; max-width: 100%; justify-content: space-between; }
 
 .scene-viewer {
   flex: 1;
@@ -402,14 +389,14 @@ body {
 .dialogue-panel.integrated-panel {
   background: #AA9BCE;
   border-top: 2px solid var(--border-color);
-  padding: 14px 24px;
-  padding-bottom: calc(max(env(safe-area-inset-bottom, 14px), 14px) + 8px);
+  padding: 10px 16px;
+  padding-bottom: calc(env(safe-area-inset-bottom, 14px) + 8px);
   min-height: 185px;
   max-height: 42%;
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  gap: 16px;
+  gap: 12px;
   overflow-y: auto;
   width: 100%;
   box-sizing: border-box;
@@ -419,8 +406,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100px;
-  min-width: 100px;
+  width: 90px;
+  min-width: 90px;
   gap: 6px;
   flex-shrink: 0;
 }
@@ -428,7 +415,7 @@ body {
 .portrait-frame {
   width: 100%;
   flex: 1;
-  min-height: 100px;
+  min-height: 95px;
   background: #FFFDF9;
   border: 2px solid var(--border-color);
   border-radius: 12px;
@@ -463,7 +450,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 6px;
+  gap: 4px;
 }
 
 .dialogue-top-meta {
@@ -478,9 +465,9 @@ body {
 .lives-container {
   display: flex;
   gap: 4px;
-  font-size: 14px;
+  font-size: 13px;
   background: rgba(21, 14, 38, 0.45);
-  padding: 2px 8px;
+  padding: 1px 7px;
   border-radius: 12px;
   border: 1px solid rgba(240, 194, 66, 0.3);
   animation: heartPop 0.3s ease;
@@ -510,9 +497,9 @@ body {
 .jp-text {
   font-family: var(--font-clean);
   font-weight: 600;
-  font-size: 17px;
+  font-size: 16.5px;
   color: #31215B;
-  line-height: 1.5;
+  line-height: 1.45;
   min-height: auto;
   white-space: pre-wrap;
   margin-top: 0;
@@ -523,7 +510,7 @@ body {
   flex-direction: column; 
   gap: 8px; 
   width: 100%; 
-  margin-top: 10px;
+  margin-top: 8px;
   animation: fadeInChoices 0.3s ease-out;
 }
 
@@ -540,7 +527,7 @@ body {
 
 .btn-choice {
   text-align: left;
-  padding: 12px 18px;
+  padding: 11px 16px;
   background: #150E26;
   color: #FFFFFF;
   font-weight: 600;
@@ -564,7 +551,7 @@ body {
   background: #150E26;
   color: #FFFFFF;
   border: 2px solid var(--border-btn);
-  padding: 8px 22px;
+  padding: 7px 20px;
   border-radius: 20px;
   cursor: pointer;
   font-family: var(--font-th);
@@ -582,8 +569,8 @@ body {
   text-align: center;
   gap: 16px;
   width: 100%;
-  max-width: 500px;
-  margin: auto;
+  max-width: 480px;
+  margin: auto 0;
 }
 
 .cleared-title { font-family: var(--font-th); font-weight: 700; font-size: 28px; color: #FFFFFF; }
@@ -616,8 +603,7 @@ body {
   text-align: center;
   gap: 16px;
   width: 100%;
-  max-width: 500px;
-  margin: auto;
+  max-width: 480px;
 }
 
 .gameover-title { font-family: var(--font-clean); font-weight: 800; color: #FFFFFF; font-size: 32px; }
@@ -664,7 +650,7 @@ body {
 .modal-box {
   background: var(--bg-color);
   width: 100%;
-  max-width: 700px;
+  max-width: 600px;
   height: 85dvh;
   max-height: 85dvh;
   border-radius: 24px 24px 0 0;
@@ -674,7 +660,6 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 16px);
   border-top: 2px solid var(--border-btn);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
-  margin: 0 auto;
 }
 
 .modal-header {
@@ -710,7 +695,7 @@ body {
 
 /* Modal คู่มือการเล่น */
 .guide-modal-box {
-  max-width: 560px;
+  max-width: 520px;
   height: auto;
   max-height: 80dvh;
 }
@@ -751,7 +736,7 @@ body {
 
 /* Modal ประวัติการสนทนา */
 .log-modal-box {
-  max-width: 600px;
+  max-width: 560px;
   height: 80dvh;
 }
 
