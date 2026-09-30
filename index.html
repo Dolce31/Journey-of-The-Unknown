@@ -27,13 +27,15 @@
 
     <!-- Screen 1: Title Screen -->
     <section id="screen-title" class="screen active">
+      <!-- ปุ่มคู่มือการเล่นมุมซ้ายบน -->
+      <button id="btn-guide-main" class="icon-btn guide-btn" type="button">คู่มือการเล่น</button>
+
       <div class="title-content">
         <div class="main-cover">
           <img src="https://files.catbox.moe/u0id56.jpeg" alt="ภาพปกเกม" class="cover-img" referrerpolicy="no-referrer">
         </div>
         <h1 class="game-title">Journey of the Unknown</h1>
         <p class="game-subtitle">หลุดมาต่างโลกทั้งทีอยู่ๆก็ได้ฝึกคันจิในโลกเวทมนตร์</p>
-        
         
         <div class="title-actions">
           <button id="btn-start" class="btn-primary" onclick="showScreen('screen-difficulty')">เริ่มเกม</button>
@@ -133,7 +135,11 @@
       <div class="scene-viewer">
         <img id="scene-bg-img" src="" alt="ฉาก" class="scene-bg-img hidden" referrerpolicy="no-referrer">
         <div class="bg-placeholder-guide">[ ฉาก ]</div>
+
+        <!-- ปุ่มประวัติการสนทนามุมขวาล่างของฉาก -->
+        <button id="btn-log" class="icon-btn log-btn" type="button">ประวัติ</button>
       </div>
+
       <div class="dialogue-panel integrated-panel">
         <div class="portrait-box">
           <div class="portrait-frame">
@@ -145,11 +151,7 @@
         <div class="dialogue-right">
           <!-- กล่องพลังชีวิตมุมขวาบนของ Text Box -->
           <div class="dialogue-top-meta">
-            <div id="player-lives" class="lives-container hidden">
-              <span class="heart">❤️</span>
-              <span class="heart">❤️</span>
-              <span class="heart">❤️</span>
-            </div>
+            <div id="player-lives" class="lives-container hidden"></div>
           </div>
 
           <div class="text-area">
@@ -192,6 +194,51 @@
       </div>
     </section>
 
+    <!-- Modal คู่มือการเล่น -->
+    <div id="modal-guide" class="modal-overlay hidden">
+      <div class="modal-box guide-modal-box">
+        <div class="modal-header">
+          <h3>คู่มือการเล่น</h3>
+          <button id="btn-close-guide" class="btn-close" type="button">✕</button>
+        </div>
+        <div class="modal-body guide-body">
+          <div class="guide-card">
+            <h4>เรื่องราวและเป้าหมาย</h4>
+            <p>คุณถูกอัญเชิญมาต่างโลกโดยความผิดพลาด ทางเดียวที่จะกลับโลกเดิมได้คือการช่วยทำภารกิจด้วยการร่ายเวทมนตร์ภาษาญี่ปุ่นร่วมกับเฟลิส</p>
+          </div>
+
+          <div class="guide-card">
+            <h4>🎮 ระดับความยาก & หัวใจ</h4>
+            <ul>
+              <li><strong>โหมดง่าย (Easy):</strong> มีหัวใจ ❤️❤️❤️ (3 ดวง) มีโอกาสตอบผิดได้ 3 ครั้ง หากหัวใจหมดแล้วตอบผิดอีกจะ Game Over</li>
+              <li><strong>โหมดยาก (Hard):</strong> มีหัวใจ ❤️❤️ (2 ดวง) มีโอกาสตอบผิดได้ 2 ครั้ง หากหัวใจหมดแล้วตอบผิดอีกจะ Game Over</li>
+            </ul>
+          </div>
+
+          <div class="guide-card">
+            <h4>คลังคันจิ</h4>
+            <p>คุณสามารถเปิดปุ่ม <strong>"คลังคันจิ"</strong> ที่หน้าหลักเพื่อทบทวนคำศัพท์ คำอ่าน และความหมายก่อนเริ่มเล่นได้เสมอ</p>
+          </div>
+
+          <div class="guide-card">
+            <h4>⚠️ ข้อควรระวัง</h4>
+            <p>การเลือกคันจิผิดความหมาย จะส่งผลให้เวทมนตร์ทำงานผิดพลาดจนนำไปสู่การเสียชีวิต</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal ประวัติการสนทนา -->
+    <div id="modal-log" class="modal-overlay hidden">
+      <div class="modal-box log-modal-box">
+        <div class="modal-header">
+          <h3>ประวัติการสนทนา</h3>
+          <button id="btn-close-log" class="btn-close" type="button">✕</button>
+        </div>
+        <div id="log-content-list" class="modal-body log-body"></div>
+      </div>
+    </div>
+
     <!-- Modal คลังคันจิ -->
     <div id="modal-glossary" class="modal-overlay hidden">
       <div class="modal-box">
@@ -201,7 +248,13 @@
         </div>
 
         <div class="modal-body">
-          <div class="glossary-tabs stage-tabs">
+          <!-- ช่องค้นหาคำศัพท์คันจิ -->
+          <div class="glossary-search-wrap">
+            <input type="text" id="glossary-search-input" class="glossary-search-input" placeholder="🔍 ค้นหาคันจิ, คำอ่าน, ความหมาย..." autocomplete="off">
+            <button id="btn-clear-search" class="btn-clear-search hidden" type="button">✕</button>
+          </div>
+
+          <div id="glossary-stage-tabs" class="glossary-tabs stage-tabs">
             <button class="tab-btn active" onclick="switchGlossaryTab('stage1')">บทที่ 1</button>
             <button class="tab-btn" onclick="switchGlossaryTab('stage2')">บทที่ 2</button>
             <button class="tab-btn" onclick="switchGlossaryTab('stage3')">บทที่ 3</button>
